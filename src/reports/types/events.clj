@@ -29,7 +29,7 @@
         ; Prefixes of DOIs found in subject or object position.
         prefixes (map #(cr-doi/get-prefix %) dois)
 
-        prefix-count (count prefixes)
+        prefix-count (count (distinct prefixes))
         prefix-frequencies (frequencies prefixes)
 
         distinct-doi-count (count (distinct dois))
@@ -42,7 +42,7 @@
 
         ; Lag between occurred and collected in seconds.
         lags (map #(lag (:occurred_at %) (:timestamp %)) daily-events)
-        average-lag (/ (reduce + lags) (count lags))]
+        average-lag (when (not-empty lags) (/ (reduce + lags) (count lags)))]
 
   {:warnings 0
    :human-data {

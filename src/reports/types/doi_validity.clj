@@ -7,7 +7,8 @@
            [clj-http.client :as client]
            [clojure.tools.logging :as log]
            [clojure.core.cache :as cache]
-           [clojure.core.memoize :as memo]))
+           [clojure.core.memoize :as memo]
+           [robert.bruce :refer [try-try-again]]))
 
 (def good-doi-regex
   "Bear minumum to look like a DOI. Regression test for an earlier bug (and maybe future ones too).
@@ -18,11 +19,14 @@
 
 (defn doi-exists?
   [doi-url]
-  (future (let [doi (cr-doi/non-url-doi doi-url)
-        result (client/get (str "http://doi.org/api/handles/" doi) {:throw-exceptions false})]
-    (when (zero? (mod (swap! dois-checked inc) 1000))
-      (log/info "Checked" @dois-checked "DOIs"))
-    (= (:status result) 200))))
+  (future
+    (try-try-again
+      {:sleep 30000}
+      #(let [doi (cr-doi/non-url-doi doi-url)
+            result (client/get (str "http://doi.org/api/handles/" doi) {:throw-exceptions false})]
+        (when (zero? (mod (swap! dois-checked inc) 1000))
+          (log/info "Checked" @dois-checked "DOIs"))
+        (= (:status result) 200)))))
 
 (def doi-exist-cached
   (memo/lu doi-exists? :lu/threshold 4096))
@@ -43,10 +47,9 @@
         count-containing-hash (count containing-hash)
 
         ; Split into chunks, fetch each chunk in parallel.
-        doi-like-in-chunks (partition-all 256 doi-like)
+        doi-like-in-chunks (partition-all 64 doi-like)
         chunks-c (atom 0)
         doi-existence-in-chunks (map (fn [doi-like-chunk]
-                                       (log/info (swap! chunks-c inc))
                                        (doall (map (fn [doi] [doi (doi-exist-cached doi)]) doi-like-chunk))) doi-like-in-chunks)
 
         non-existant-in-chunks (map (fn [chunk]

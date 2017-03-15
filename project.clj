@@ -1,4 +1,4 @@
-(defproject reports "0.1.0-SNAPSHOT"
+(defproject reports "0.1.1"
   :description "Event Data Reports"
   :url "http://eventdata.crossref.org/"
   :license {:name "MIT License"
@@ -6,7 +6,7 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/core.cache "0.6.5"]
                  [org.clojure/core.memoize "0.5.8"]
-                 [event-data-common "0.1.15"]
+                 [event-data-common "0.1.20"]
                  [org.clojure/data.json "0.2.6"]
                  [crossref-util "0.1.10"]
                  [clj-http "2.3.0"]

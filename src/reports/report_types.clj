@@ -5,9 +5,11 @@
    - :warnings - number"
   (require [reports.types.events :as events]
            [reports.types.twitter-ids :as twitter-ids]
-           [reports.types.doi-validity :as doi-validity]))
+           [reports.types.doi-validity :as doi-validity]
+           [reports.types.status :as status]))
 
 (def all-manifests
   {:events events/manifest
    :twitter-ids twitter-ids/manifest
-   :doi-validity doi-validity/manifest})
+   :doi-validity doi-validity/manifest
+   :status status/manifest})
