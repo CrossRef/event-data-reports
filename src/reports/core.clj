@@ -56,7 +56,7 @@
   "Generate all reports for this day and store them."
   [date missing-type-ids]
   (log/info "Generating" date "types" missing-type-ids)
-  (let [events (take 100 (fetch-query-api-events date))]
+  (let [events (fetch-query-api-events date)]
     (doseq [type-id missing-type-ids]
       (log/info "Generate report" type-id)
       (let [manifest (report-types/all-manifests type-id)
