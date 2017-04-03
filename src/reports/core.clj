@@ -30,7 +30,7 @@
 
 (def ymd-format (clj-time-format/formatter "yyyy-MM-dd"))
 
-(def query-api "https://query.eventdata.crossref.org")
+(def query-api "https://query-all.eventdata.crossref.org")
 
 (def report-prefix "r/")
 
@@ -39,21 +39,24 @@
   (str report-prefix (clj-time-format/unparse ymd-format date) "/" (name report-type-id) ".json"))
 
 (defn fetch-query-api-events
-  "Fetch a seq of events as reported as collected on this day."
-  [date]
-  (let [date-str (clj-time-format/unparse ymd-format date)
-        ; TODO remove whitelist.
-        url (str query-api "/collected/" date-str "/events.json?experimental=true&whitelist=false")
-        response (client/get url {:as :stream :timeout 900000})
-        body (json/read (io/reader (:body response)) :key-fn keyword)
-        events (:events body)]
-    events)) 
+  "Fetch a lazy seq of events as reported as collected on this day."
+  ([date] (fetch-query-api-events date ""))
+  ([date cursor]
+    (let [date-str (clj-time-format/unparse ymd-format date)
+          url (str query-api "/events?filter=from-collected-date:" date-str ",until-collected-date:" date-str "&cursor=" cursor)
+          response (client/get url {:as :stream :timeout 900000})
+          body (json/read (io/reader (:body response)) :key-fn keyword)
+          events (-> body :message :events)
+          next-cursor (-> body :message :next-cursor)]
+      (if next-cursor
+        (lazy-cat events (fetch-query-api-events date next-cursor))
+        events))))
 
 (defn generate!
   "Generate all reports for this day and store them."
   [date missing-type-ids]
   (log/info "Generating" date "types" missing-type-ids)
-  (let [events (fetch-query-api-events date)]
+  (let [events (take 100 (fetch-query-api-events date))]
     (doseq [type-id missing-type-ids]
       (log/info "Generate report" type-id)
       (let [manifest (report-types/all-manifests type-id)

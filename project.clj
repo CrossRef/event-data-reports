@@ -1,4 +1,4 @@
-(defproject reports "0.1.1"
+(defproject reports "0.1.2"
   :description "Event Data Reports"
   :url "http://eventdata.crossref.org/"
   :license {:name "MIT License"
