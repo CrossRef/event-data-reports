@@ -29,7 +29,7 @@
         (= (:status result) 200)))))
 
 (def doi-exist-cached
-  (memo/lu doi-exists? :lu/threshold 4096))
+  (memo/lu doi-exists? :lu/threshold 100000))
 
 (defn run
   [date daily-events]

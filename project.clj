@@ -1,4 +1,4 @@
-(defproject reports "0.1.2"
+(defproject reports "0.1.3"
   :description "Event Data Reports"
   :url "http://eventdata.crossref.org/"
   :license {:name "MIT License"
@@ -9,7 +9,7 @@
                  [event-data-common "0.1.20"]
                  [org.clojure/data.json "0.2.6"]
                  [crossref-util "0.1.10"]
-                 [clj-http "2.3.0"]
+                 [clj-http "3.4.1"]
                  [overtone/at-at "1.2.0"]
                  [robert/bruce "0.8.0"]
                  [yogthos/config "0.8"]
