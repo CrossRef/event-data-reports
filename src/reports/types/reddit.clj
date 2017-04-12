@@ -11,12 +11,12 @@
 (defn run
   [date daily-events]
   (let [reddit-events (filter #(= "reddit" (:source_id %)) daily-events)
-        subreddits (map #(->> % :subj_id (re-find #"(/r/.*?)/") second) reddit-events)
+        subreddits (map #(->> % :subj_id (re-find #"(/r/.*?)/") second clojure.string/lower-case) reddit-events)
         distinct-subreddits (set subreddits)
         subreddit-counts (frequencies subreddits)
-        artifact-subreddits (-> (artifact/fetch-latest-artifact-string "subreddit-list")
-                                (.split "\n")
-                                set)
+        artifact-subreddits (set (map clojure.string/lower-case
+                                      #(-> (artifact/fetch-latest-artifact-string "subreddit-list")
+                                           (.split "\n"))))
 
         ; subreddits in which events were found but aren't yet in the subreddit artifact.
         ; this artifact is used for a different source (reddit-links).

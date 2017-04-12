@@ -21,7 +21,8 @@
             [clojurewerkz.quartzite.schedule.calendar-interval :as cal]
             [clojurewerkz.quartzite.jobs :refer [defjob]]
             [clojurewerkz.quartzite.scheduler :as qs]
-            [clojurewerkz.quartzite.schedule.cron :as qc])
+            [clojurewerkz.quartzite.schedule.cron :as qc]
+            [robert.bruce :refer [try-try-again]])
   (:gen-class))
 
 
@@ -44,7 +45,7 @@
   ([date cursor]
     (let [date-str (clj-time-format/unparse ymd-format date)
           url (str query-api "/events?filter=from-collected-date:" date-str ",until-collected-date:" date-str "&cursor=" cursor)
-          response (client/get url {:as :stream :timeout 900000})
+          response (try-try-again {:sleep 30000 :tries 10} #(client/get url {:as :stream :timeout 900000}))
           body (json/read (io/reader (:body response)) :key-fn keyword)
           events (-> body :message :events)
           next-cursor (-> body :message :next-cursor)]
