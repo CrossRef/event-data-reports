@@ -15,9 +15,8 @@
         distinct-subreddits (set subreddits)
         subreddit-counts (frequencies subreddits)
         artifact-subreddits (set (map clojure.string/lower-case
-                                      #(-> (artifact/fetch-latest-artifact-string "subreddit-list")
-                                           (.split "\n"))))
-
+                                      (.split "\n" (artifact/fetch-latest-artifact-string "subreddit-list"))))
+                                      
         ; subreddits in which events were found but aren't yet in the subreddit artifact.
         ; this artifact is used for a different source (reddit-links).
         missing (clojure.set/difference distinct-subreddits artifact-subreddits)]
