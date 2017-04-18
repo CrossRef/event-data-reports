@@ -33,18 +33,15 @@
 
   {:warnings 0
    :human-data {
-     :obj-domain-count (count distinct-obj-domains)
-     :obj-domain-counts obj-domain-counts
-     :obj-domains distinct-obj-domains
-     :obj-url-domain-count (count distinct-obj-url-domains)
-     :obj-url-domain-counts obj-url-domain-counts
-     :obj-url-domains distinct-obj-url-domains
-     :subj-domain-count (count distinct-subj-domains)
-     :subj-domain-counts subj-domain-counts
-     :subj-domains distinct-subj-domains
-     :subj-url-domain-count (count distinct-subj-url-domains)
-     :subj-url-domain-counts subj-url-domain-counts
-     :subj-url-domains distinct-subj-url-domains}
+    ; The full lists are so long that only the minimum is useful in an email summary.
+    :obj-domain-count (count distinct-obj-domains)
+    :obj-url-domain-count (count distinct-obj-url-domains)
+    :obj-url-domain-counts obj-url-domain-counts
+
+    :subj-domain-count (count distinct-subj-domains)
+    :subj-url-domain-count (count distinct-subj-url-domains)
+    :subj-url-domain-counts subj-url-domain-counts}
+
    :machine-data {
      :obj-domain-count (count distinct-obj-domains)
      :obj-domain-counts obj-domain-counts
