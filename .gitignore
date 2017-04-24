@@ -12,3 +12,5 @@ pom.xml.asc
 .env
 .m2-cache
 .DS_Store
+prod.env
+

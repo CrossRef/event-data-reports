@@ -27,6 +27,10 @@ Individual report types are free to collect their own data, but are supplied wit
  - `S3_SECRET`
  - `REPORT_BUCKET_NAME` - S3 bucket name to store reports
  - `REPORT_REGION_NAME` - S3 region name for report bucket
+ - `BUS_BUCKET_NAME` - S3 details for Event Bus
+ - `BUS_REGION_NAME`
+ - `BUS_S3_KEY`
+ - `BUS_S3_SECRET`
 
 The address of the Query API is hard-coded because the report is meant to consume public data.
 

@@ -9,7 +9,9 @@
            [reports.types.status :as status]
            [reports.types.reddit :as reddit]
            [reports.types.stackexchange :as stackexchange]
-           [reports.types.domains :as domains]))
+           [reports.types.domains :as domains]
+           [reports.types.evidence :as evidence]
+           [reports.types.bus :as bus]))
 
 (def all-manifests
   {:events events/manifest
@@ -18,5 +20,6 @@
    :status status/manifest
    :reddit reddit/manifest
    :stackexchange stackexchange/manifest
-   :domains domains/manifest})
-
+   :domains domains/manifest
+   :evidence evidence/manifest
+   :bus bus/manifest})

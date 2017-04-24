@@ -1,5 +1,6 @@
 (ns reports.core
-  (:require [reports.mail :as mail]
+  (:require [reports.storage :as storage]
+            [reports.mail :as mail]
             [reports.report-types :as report-types]
             [event-data-common.storage.store :as store]
             [event-data-common.storage.store :refer [Store]]
@@ -25,9 +26,6 @@
             [robert.bruce :refer [try-try-again]])
   (:gen-class))
 
-
-(def report-storage
-  (delay (s3/build (:s3-key env) (:s3-secret env) (:report-region-name env) (:report-bucket-name env))))
 
 (def ymd-format (clj-time-format/formatter "yyyy-MM-dd"))
 
@@ -66,12 +64,12 @@
                                     :generated (str (clj-time/now))
                                     :type type-id)
             report-path (path-for-report-type-id date type-id)]
-        (store/set-string @report-storage report-path (json/write-str decorated))))))
+        (store/set-string @storage/report-storage report-path (json/write-str decorated))))))
 
 (defn report-exists?
   [date report-type-id]
   (let [report-path (path-for-report-type-id date report-type-id)]
-    (= (store/keys-matching-prefix @report-storage report-path) [report-path])))
+    (= (store/keys-matching-prefix @storage/report-storage report-path) [report-path])))
 
 (defn missing-reports-for-date
   "Return report-type-ids of reports that do not exist for this date."
@@ -92,8 +90,8 @@
 (defn retrieve-reports
   [date]
   (let [prefix (str report-prefix (clj-time-format/unparse ymd-format date) "/")
-        paths (store/keys-matching-prefix @report-storage prefix)]
-    (map #(-> (store/get-string @report-storage %) (json/read-str :key-fn str)) paths)))
+        paths (store/keys-matching-prefix @storage/report-storage prefix)]
+    (map #(-> (store/get-string @storage/report-storage %) (json/read-str :key-fn str)) paths)))
 
 (defn render-reports
   [report-seq]
