@@ -9,7 +9,7 @@
             [event-data-common.artifact :as artifact]))
 
 (defn run
-  [date daily-events]
+  [date daily-events _]
   (let [reddit-events (filter #(= "reddit" (:source_id %)) daily-events)
         subreddits (map #(->> % :subj_id (re-find #"(/r/.*?)/") second clojure.string/lower-case) reddit-events)
         distinct-subreddits (set subreddits)

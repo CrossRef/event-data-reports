@@ -32,7 +32,7 @@
   (memo/lu doi-exists? :lu/threshold 100000))
 
 (defn run
-  [date daily-events]
+  [date daily-events _]
   (let [; DOI-like strings
         doi-like (filter #(re-find #"https?://(dx\\.)?doi.org" %)
                    (mapcat (fn [event] [(:subj_id event) (:obj_id event)]) daily-events))

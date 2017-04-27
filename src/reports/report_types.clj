@@ -5,6 +5,7 @@
    - :warnings - number"
   (require [reports.types.events :as events]
            [reports.types.twitter-ids :as twitter-ids]
+           [reports.types.twitter-compliance :as twitter-compliance]
            [reports.types.doi-validity :as doi-validity]
            [reports.types.status :as status]
            [reports.types.reddit :as reddit]
@@ -22,4 +23,6 @@
    :stackexchange stackexchange/manifest
    :domains domains/manifest
    :evidence evidence/manifest
-   :bus bus/manifest})
+   :bus bus/manifest
+   :twitter-compliance twitter-compliance/manifest ; must come after twitter-ids. Preferably some time after to give S3 a chance to propagate.
+  })

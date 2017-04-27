@@ -67,7 +67,6 @@
 
 (defn event-ids-from-date-index
   [date]
-  (prn "Fetch events IDS from date index" date)
   (let [index-prefix (str "d/" (clj-time-format/unparse ymd-format date))
         event-keys (store/keys-matching-prefix @storage/event-bus-storage index-prefix)
         ; remove leading prefix.
@@ -75,7 +74,7 @@
     event-ids))
 
 (defn run
-  [date daily-events]
+  [date daily-events _]
   (let [; Event IDs from Query API for this day.
         from-query-api (set (map :id daily-events))
         ; Event IDs from Evidence Records produced on this day.

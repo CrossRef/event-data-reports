@@ -20,7 +20,7 @@
       (* (clj-time/in-seconds (clj-time/interval end-date start-date)) -1))))
 
 (defn run
-  [date daily-events]
+  [date daily-events _]
   (let [event-count (count daily-events)
         ; DOIs found in subject or object position
         dois (filter #(cr-doi/well-formed %)

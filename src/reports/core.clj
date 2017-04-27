@@ -53,13 +53,13 @@
 
 (defn generate!
   "Generate all reports for this day and store them."
-  [date missing-type-ids]
+  [date missing-type-ids scratch]
   (log/info "Generating" date "types" missing-type-ids)
   (let [events (fetch-query-api-events date)]
     (doseq [type-id missing-type-ids]
       (log/info "Generate report" type-id)
       (let [manifest (report-types/all-manifests type-id)
-            result ((:run manifest) date events)
+            result ((:run manifest) date events scratch)
             decorated (assoc result :date (str date)
                                     :generated (str (clj-time/now))
                                     :type type-id)
@@ -79,13 +79,13 @@
 
 (defn generate-if-missing!
   "Generate missing reports for this date, if there are any."
-  [date]
+  [date scratch]
   (let [missing-type-ids (missing-reports-for-date date)]
     (if (empty? missing-type-ids)
       (do
         (log/info "Skipping" date)
         nil)
-      (generate! date missing-type-ids))))
+      (generate! date missing-type-ids scratch))))
 
 (defn retrieve-reports
   [date]
@@ -124,7 +124,9 @@
 
 (defn run-daily!
   []
-  (let [max-days (Integer/parseInt (:max-days env "10"))
+  (let [; A scratch space that can be used by report types to cache data within a scan.
+        scratch (atom {})
+        max-days (Integer/parseInt (:max-days env "10"))
         now (clj-time/now)
         start-date (clj-time-format/parse ymd-format (:epoch env))
         end-date (clj-time/minus now (clj-time/days 1))
@@ -133,7 +135,7 @@
     (log/info "Checking / generating historical reports...")
     (doseq [date dates]
       (log/info "Looking at" (clj-time-format/unparse ymd-format date))
-      (generate-if-missing! date))
+      (generate-if-missing! date scratch))
     (log/info "Generated all reports")
     (log/info "Mailing report for" (clj-time-format/unparse ymd-format end-date))))
 

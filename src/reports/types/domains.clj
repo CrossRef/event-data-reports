@@ -11,7 +11,7 @@
     (clojure.string/lower-case (.getHost (new URL url-str)))))
 
 (defn run
-  [date daily-events]
+  [date daily-events _]
   (let [subj-domains (map #(-> % :subj_id hostname) daily-events)
         obj-domains (map #(-> % :obj_id hostname) daily-events)
 

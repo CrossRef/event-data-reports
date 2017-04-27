@@ -15,7 +15,6 @@
 
 (defn event-ids-from-date-index
   [date]
-  (prn "Fetch events IDS from date index" date)
   (let [index-prefix (str "d/" (clj-time-format/unparse ymd-format date))
         event-keys (store/keys-matching-prefix @storage/event-bus-storage index-prefix)
         ; remove leading prefix.
@@ -42,7 +41,7 @@
     missing-ids))
 
 (defn run
-  [date _]
+  [date _ _]
   (let [; Event IDs from the Event Bus' daily index.
         event-ids (set (event-ids-from-date-index date))
         missing-from-bus (find-events-missing-from-storage event-ids)]

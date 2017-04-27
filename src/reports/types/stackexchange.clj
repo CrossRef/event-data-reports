@@ -14,7 +14,7 @@
   (clojure.string/lower-case (.getHost (new URL url-str))))
 
 (defn run
-  [date daily-events]
+  [date daily-events _]
   (let [se-events (filter #(= "stackexchange" (:source_id %)) daily-events)
         sites (map #(-> % :subj_id hostname) se-events)
         distinct-sites (set sites)

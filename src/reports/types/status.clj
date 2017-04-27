@@ -20,7 +20,7 @@
     body))
 
 (defn run
-  [date daily-events]
+  [date daily-events _]
   (let [status-snapshot (fetch-status-snapshot date)]
 
   {:warnings 0
