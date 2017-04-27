@@ -46,22 +46,25 @@
   [date tweet-ids-in-events]
   (let [deleted-chunk-keys (store/keys-matching-prefix @storage/report-storage (str "twitter/tweet-deletions/" (clj-time-format/unparse ymd-format date)))
         num-chunks (count deleted-chunk-keys)]
-    ; Very deliberately making GC easy. Chunks are big.
-    (loop [matching #{}
-           [chunk-key & chunk-keys] deleted-chunk-keys
-           total-compared 0
-           chunks-compared 0]
-      (let [chunk-content (set (map str (json/read-str (store/get-string @storage/report-storage chunk-key))))
-            intersecting (clojure.set/intersection chunk-content tweet-ids-in-events)]
-        (log/info "Compared" total-compared "IDs in" chunks-compared "chunks / " num-chunks "chunks. In this chunk" (count intersecting) "IDs intersect")
-        (when-not (empty? intersecting)
-          (log/info "Deleted tweets:" intersecting))
-        (if (empty? chunk-keys)
-          (clojure.set/union intersecting matching)
-          (recur (clojure.set/union intersecting matching)
-                 chunk-keys
-                 (+ total-compared (count chunk-content))
-                 (inc chunks-compared)))))))
+    
+    ; If it's empty the destructure will match a nil list, so don't even start the loop.
+    (when (not-empty? deleted-chunk-keys)
+      ; Very deliberately making GC easy. Chunks are big.
+      (loop [matching #{}
+             [chunk-key & chunk-keys] deleted-chunk-keys
+             total-compared 0
+             chunks-compared 0]
+        (let [chunk-content (set (map str (json/read-str (store/get-string @storage/report-storage chunk-key))))
+              intersecting (clojure.set/intersection chunk-content tweet-ids-in-events)]
+          (log/info "Compared" total-compared "IDs in" chunks-compared "chunks / " num-chunks "chunks. In this chunk" (count intersecting) "IDs intersect")
+          (when-not (empty? intersecting)
+            (log/info "Deleted tweets:" intersecting))
+          (if (empty? chunk-keys)
+            (clojure.set/union intersecting matching)
+            (recur (clojure.set/union intersecting matching)
+                   chunk-keys
+                   (+ total-compared (count chunk-content))
+                   (inc chunks-compared))))))))
 
 (defn run
   [date daily-events scratch]
