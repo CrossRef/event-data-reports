@@ -48,7 +48,7 @@
         num-chunks (count deleted-chunk-keys)]
     
     ; If it's empty the destructure will match a nil list, so don't even start the loop.
-    (when (not-empty? deleted-chunk-keys)
+    (when (not-empty deleted-chunk-keys)
       ; Very deliberately making GC easy. Chunks are big.
       (loop [matching #{}
              [chunk-key & chunk-keys] deleted-chunk-keys
@@ -69,16 +69,17 @@
 (defn run
   [date daily-events scratch]
   ; Only fetch tweets-in-events once per run.
-  (let [tweet-ids-in-events (:tweet-ids-in-events scratch (all-tweet-ids-in-events-ever!))
+  (let [tweet-ids-in-events (or (:tweet-ids-in-events @scratch) (all-tweet-ids-in-events-ever!))
         matching-ids (matching-tweet-ids-for-day date tweet-ids-in-events)]
     
     ; Cache for next time.
-    (assoc! scratch :tweet-ids-in-events tweet-ids-in-events)
+    (swap! scratch #(assoc % :tweet-ids-in-events tweet-ids-in-events))
     {:warnings (count matching-ids)
      :human-data {
-       :deleted-tweet-ids matching-ids}
+       :num-deleted-tweet-ids (count matching-ids)}
      :machine-data {
-       :deleted-tweet-ids matching-ids}}))
+       :deleted-tweet-ids matching-ids
+       :num-deleted-tweet-ids (count matching-ids)}}))
 
 (def manifest
   {:run run

@@ -6,7 +6,7 @@
   (first (re-find #"(\d+)$" pid)))
 
 (defn run
-  [date daily-events]
+  [date daily-events _]
   (let [tweet-events (filter #(= (:source_id %) "twitter") daily-events)
         tweet-id-event-id (into {} (map (fn [event] [(-> event :subj_id tweet-pid-to-id) (:id event)]) tweet-events))]
   {:warnings 0
