@@ -1,4 +1,4 @@
-(defproject reports "0.1.9"
+(defproject reports "0.1.10"
   :description "Event Data Reports"
   :url "http://eventdata.crossref.org/"
   :license {:name "MIT License"
@@ -23,7 +23,8 @@
                  [org.slf4j/slf4j-simple "1.7.21"]
                  [com.sun.mail/javax.mail "1.5.4"]
                  [json-html "0.4.0"]
-                 [clojurewerkz/quartzite "2.0.0"]]
+                 [clojurewerkz/quartzite "2.0.0"]
+                 [throttler "1.0.0"]]
   :main ^:skip-aot reports.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})

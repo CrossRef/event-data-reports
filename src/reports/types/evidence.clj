@@ -19,7 +19,7 @@
   (:gen-class))
 
 (def query-api-endpoint
-  "https://query-all.eventdata.crossref.org")
+  "https://query.eventdata.crossref.org")
 
 (def ymd-format (clj-time-format/formatter "yyyy-MM-dd"))
 
@@ -63,7 +63,8 @@
 (defn event-id-extant-in-query
   [event-id]
   "Spot-check that Event ID exists in the Query API."
-  (= 200 (:status (client/get (str query-api-endpoint "/events/" event-id) {:throw-exceptions false}))))
+  (= 200 (:status (client/get (str query-api-endpoint "/events/" event-id) {:query-params {"include-deleted" "true"}
+                                                                            :throw-exceptions false}))))
 
 (defn event-ids-from-date-index
   [date]

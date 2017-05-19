@@ -29,7 +29,7 @@
 
 (def ymd-format (clj-time-format/formatter "yyyy-MM-dd"))
 
-(def query-api "https://query-all.eventdata.crossref.org")
+(def query-api "https://query.eventdata.crossref.org")
 
 (def report-prefix "r/")
 
